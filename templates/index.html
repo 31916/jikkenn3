@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>交通事故分析</title>
+</head>
+<body>
+  <h1>福井県 交通事故分析アプリ</h1>
+
+  <form method="POST" action="/results">
+    <label>地域を選択：</label>
+    <select name="area">
+      <option value="">全地域</option>
+      {% for area in areas %}
+        <option value="{{ area }}">{{ area }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">分析する</button>
+  </form>
+</body>
+</html>
