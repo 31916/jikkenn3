@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # CSV読み込み（Windows日本語CSVの文字化け防止）
 seigzo = pd.read_csv('data/seigzo.csv', encoding='utf-8-sig')
-honhyo = pd.read_csv('data/honhyo.csv', encoding='utf-8-sig')
+honhyo = pd.read_csv('data/honhyo_2024.csv', encoding='utf-8-sig')
 
 # --- トップページ ---
 @app.route('/')
