@@ -17,7 +17,7 @@ def results():
 
     # 交差点名でフィルタリング
     if intersection and '交差点名' in filtered.columns:
-        filtered = filtered[filtered['交差点名'].str.contains(intersection, na=False)]
+        filtered = filtered[filtered['交差点名'].str.contains(intersection, case=False, na=False)]
 
     # 交差点ごとの事故件数集計
     if '交差点ID' in honhyo.columns:
