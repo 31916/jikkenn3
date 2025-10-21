@@ -1,11 +1,17 @@
+from flask import Flask, render_template, request
+import pandas as pd
+import folium
+
+app = Flask(__name__)
+
+# CSV読み込み（Windows日本語CSVの文字化け防止）
+seigzo = pd.read_csv('data/seigzo.csv', encoding='cp932')
+honhyo = pd.read_csv('data/honhyo.csv', encoding='cp932')
+
 # --- トップページ ---
 @app.route('/')
 def index():
-    # CSV読み込み時に文字コード指定
-    global seigzo, honhyo
-    seigzo = pd.read_csv('data/seigzo.csv', encoding='shift_jis')  # 文字化け防止
-    honhyo = pd.read_csv('data/honhyo.csv', encoding='shift_jis')  # 事故データ
-
+    # 地区名リストを取得（空白列は除外）
     areas = sorted(seigzo['地区名'].dropna().unique()) if '地区名' in seigzo.columns else []
     return render_template('index.html', areas=areas)
 
@@ -13,14 +19,14 @@ def index():
 @app.route('/results', methods=['POST'])
 def results():
     area = request.form.get('area')
-    intersection = request.form.get('intersection')  # 追加部分
+    intersection = request.form.get('intersection')  # 交差点名検索
 
     # 地域でフィルタリング
     filtered = seigzo.copy()
     if area and '地区名' in filtered.columns:
         filtered = filtered[filtered['地区名'] == area]
 
-    # 交差点名でフィルタリング（大文字小文字無視・部分一致）
+    # 交差点名で部分一致検索（大文字小文字無視）
     if intersection and '交差点名' in filtered.columns:
         filtered = filtered[filtered['交差点名'].str.contains(intersection, case=False, na=False)]
 
@@ -34,7 +40,7 @@ def results():
     merged['事故件数'] = merged['事故件数'].fillna(0).astype(int)
 
     # 地図描画
-    fmap = folium.Map(location=[36.0652, 136.2216], zoom_start=13)
+    fmap = folium.Map(location=[36.0652, 136.2216], zoom_start=13)  # 中心座標を適宜変更
     for _, row in merged.iterrows():
         lat = row.get('緯度')
         lon = row.get('経度')
@@ -56,3 +62,6 @@ def results():
         map_html=map_html,
         data=merged.to_dict(orient='records')
     )
+
+if __name__ == '__main__':
+    app.run(debug=True)
