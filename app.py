@@ -1,20 +1,6 @@
-from flask import Flask, render_template, request, jsonify
-import pandas as pd
-import folium
-import os
-
-app = Flask(__name__)
-
-# --- データ読み込み ---
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-honhyo = pd.read_csv(os.path.join(DATA_DIR, 'honhyo_2024.csv'))
-seigzo = pd.read_csv(os.path.join(DATA_DIR, 'seigzo.csv'))
-teigi = pd.read_csv(os.path.join(DATA_DIR, 'teigi.csv'))
-
 # --- トップページ ---
 @app.route('/')
 def index():
-    # 地域選択や交差点検索フォームを表示
     areas = sorted(seigzo['地区名'].dropna().unique()) if '地区名' in seigzo.columns else []
     return render_template('index.html', areas=areas)
 
@@ -22,11 +8,16 @@ def index():
 @app.route('/results', methods=['POST'])
 def results():
     area = request.form.get('area')
+    intersection = request.form.get('intersection')  # ← 追加
+
     # 地域でフィルタリング
+    filtered = seigzo.copy()
     if area and '地区名' in seigzo.columns:
-        filtered = seigzo[seigzo['地区名'] == area]
-    else:
-        filtered = seigzo.copy()
+        filtered = filtered[filtered['地区名'] == area]
+
+    # 交差点名でフィルタリング
+    if intersection and '交差点名' in filtered.columns:
+        filtered = filtered[filtered['交差点名'].str.contains(intersection, na=False)]
 
     # 交差点ごとの事故件数集計
     if '交差点ID' in honhyo.columns:
@@ -51,13 +42,4 @@ def results():
             ).add_to(fmap)
 
     map_html = fmap._repr_html_()
-    return render_template('results.html', area=area, map_html=map_html, data=merged.to_dict(orient='records'))
-
-# --- API形式でデータ返却（将来の分析用） ---
-@app.route('/api/accidents')
-def api_accidents():
-    data = honhyo.to_dict(orient='records')
-    return jsonify(data)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    return render_template('results.html', area=area, intersection=intersection, map_html=map_html, data=merged.to_dict(orient='records'))
