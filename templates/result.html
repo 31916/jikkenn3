@@ -5,24 +5,32 @@
   <title>分析結果</title>
 </head>
 <body>
-  <h1>{{ area or "全地域" }} の交通事故分析結果</h1>
-  <div>{{ map_html|safe }}</div>
+  <h1>{{ selected_area or "全地域" }} の交通事故・規制分析結果</h1>
 
-  <table border="1">
-    <thead>
-      <tr>
-        <th>交差点名</th><th>事故件数</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in data %}
-      <tr>
-        <td>{{ row['交差点名'] }}</td>
-        <td>{{ row['事故件数'] }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  {% if data %}
+    <div>{{ map_html|safe }}</div>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>交差点名</th>
+          <th>事故件数</th>
+          <th>規制内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row['交差点名称(踏切名含む)'] }}</td>
+          <td>{{ row['事故件数'] }}</td>
+          <td>{{ row.get('規制内容', '') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>該当するデータがありません。</p>
+  {% endif %}
 
   <a href="/">戻る</a>
 </body>
