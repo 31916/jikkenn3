@@ -5,8 +5,11 @@ import folium
 app = Flask(__name__)
 
 # CSV読み込み
-honhyo = pd.read_csv('data/honhyo.csv', encoding='utf-8-sig')
-seigzo = pd.read_csv('data/seigzo.csv', encoding='utf-8-sig')
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+honhyo = pd.read_csv(os.path.join(BASE_DIR, 'data', 'honhyo.csv'), encoding='utf-8-sig')
+seigzo = pd.read_csv(os.path.join(BASE_DIR, 'data', 'seigzo.csv'), encoding='utf-8-sig')
+
 
 # --- トップページ ---
 @app.route('/')
