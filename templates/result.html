@@ -11,58 +11,33 @@
     </style>
 </head>
 <body>
-    <h1>検索結果：「{{ keyword }}」</h1>
+  <h1>{{ selected_area or "全地域" }} の交通事故・規制分析結果</h1>
 
-    {% if signal_data %}
-    <h2>信号制御情報</h2>
-    <table>
-        <tr><th>交差点番号</th><th>サイクル長</th><th>スプリット#1〜#6</th></tr>
-        {% for s in signal_data %}
+  {% if data %}
+    <div>{{ map_html|safe }}</div>
+
+    <table border="1">
+      <thead>
         <tr>
-            <td>{{ s['交差点番号'] }}</td>
-            <td>{{ s['サイクル長'] }}</td>
-            <td>{{ s['スプリット＃１'] }}, {{ s['スプリット＃２'] }}, {{ s['スプリット＃３'] }},
-                {{ s['スプリット＃４'] }}, {{ s['スプリット＃５'] }}, {{ s['スプリット＃６'] }}</td>
+          <th>交差点名</th>
+          <th>事故件数</th>
+          <th>規制内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row['交差点名称(踏切名含む)'] }}</td>
+          <td>{{ row['事故件数'] }}</td>
+          <td>{{ row.get('規制内容', '') }}</td>
         </tr>
         {% endfor %}
+      </tbody>
     </table>
-    {% else %}
-    <p>該当する信号制御データはありません。</p>
-    {% endif %}
+  {% else %}
+    <p>該当するデータがありません。</p>
+  {% endif %}
 
-    <h2>事故データ（{{ jiko_count }}件）</h2>
-    {% if jiko_data %}
-    <div id="map"></div>
-    <script>
-        var map = L.map('map').setView([35.0, 135.0], 6);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        var points = {{ map_points|tojson }};
-        points.forEach(p => {
-            if (p['地点　緯度（北緯）'] && p['地点　経度（東経）']) {
-                L.marker([p['地点　緯度（北緯）'] / 10000000, p['地点　経度（東経）'] / 10000000])
-                    .addTo(map)
-                    .bindPopup("事故地点");
-            }
-        });
-    </script>
-
-    <table>
-        <tr><th>本票番号</th><th>発生日時</th><th>事故内容</th><th>死者数</th><th>負傷者数</th></tr>
-        {% for j in jiko_data %}
-        <tr>
-            <td>{{ j['本票番号'] }}</td>
-            <td>{{ j['発生日時 年'] }}/{{ j['発生日時 月'] }}/{{ j['発生日時 日'] }} {{ j['発生日時 時'] }}:{{ j['発生日時 分'] }}</td>
-            <td>{{ j['事故内容'] }}</td>
-            <td>{{ j['死者数'] }}</td>
-            <td>{{ j['負傷者数'] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>該当する事故データはありません。</p>
-    {% endif %}
+  <a href="/">戻る</a>
 </body>
 </html>
