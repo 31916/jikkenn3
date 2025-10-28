@@ -1,25 +1,14 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <title>交通事故・規制分析</title>
+    <meta charset="utf-8">
+    <title>交差点・事故検索</title>
 </head>
 <body>
-  <h1>福井県 交通事故・交差点規制分析アプリ</h1>
-
-  <form method="POST" action="/results">
-    <label>都道府県コードを選択：</label>
-    <select name="area">
-      <option value="">全地域</option>
-      {% for area in areas %}
-        <option value="{{ area }}" {% if area == selected_area %}selected{% endif %}>{{ area }}</option>
-      {% endfor %}
-    </select>
-
-    <label>交差点名で検索：</label>
-    <input type="text" name="intersection" value="{{ intersection }}" placeholder="部分一致検索">
-
-    <button type="submit">分析する</button>
-  </form>
+    <h1>交差点・事故検索</h1>
+    <form method="POST" action="/search">
+        <input type="text" name="keyword" placeholder="交差点番号または地点コード">
+        <button type="submit">検索</button>
+    </form>
 </body>
 </html>
