@@ -3,25 +3,25 @@
 <head>
     <meta charset="utf-8">
     <title>検索結果</title>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { height: 400px; margin: 20px 0; }
+        #map { height: 500px; margin: 20px 0; }
         table, th, td { border: 1px solid gray; border-collapse: collapse; padding: 5px; }
+        th { background-color: #f0f0f0; }
     </style>
 </head>
 <body>
   <h1>{{ selected_area or "全地域" }} の交通事故・規制分析結果</h1>
 
   {% if data %}
-    <div>{{ map_html|safe }}</div>
+    <div id="map">{{ map_html|safe }}</div>
 
-    <table border="1">
+    <table>
       <thead>
         <tr>
           <th>交差点名</th>
           <th>事故件数</th>
-          <th>規制内容</th>
+          <th>サイクル長</th>
+          <th>スプリット(＃1〜6)</th>
         </tr>
       </thead>
       <tbody>
@@ -29,7 +29,13 @@
         <tr>
           <td>{{ row['交差点名称(踏切名含む)'] }}</td>
           <td>{{ row['事故件数'] }}</td>
-          <td>{{ row.get('規制内容', '') }}</td>
+          <td>{{ row.get('サイクル長', '') }}</td>
+          <td>{{ row.get('スプリット＃１','') }},
+              {{ row.get('スプリット＃２','') }},
+              {{ row.get('スプリット＃３','') }},
+              {{ row.get('スプリット＃４','') }},
+              {{ row.get('スプリット＃５','') }},
+              {{ row.get('スプリット＃６','') }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -38,6 +44,6 @@
     <p>該当するデータがありません。</p>
   {% endif %}
 
-  <a href="/">戻る</a>
+  <p><a href="/">戻る</a></p>
 </body>
 </html>
