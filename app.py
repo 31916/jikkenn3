@@ -3,17 +3,16 @@ import pandas as pd
 import folium
 
 app = Flask(__name__)
-# 文字コード自動検出用
-import chardet
+
+#データ読み込み
 def read_csv_auto(path):
     with open(path, 'rb') as f:
         result = chardet.detect(f.read(10000))
     encoding = result['encoding']
     print(f"{path} detected as {encoding}")
     return pd.read_csv(path, encoding=encoding)
-# CSV読み込み（Windows日本語CSVの文字化け防止）
-seigzo = pd.read_auto('data/seigzo.csv')#, encoding='utf-8-sig')
-honhyo = pd.read_auto('data/honhyo_2024.csv')#, encoding='utf-8-sig')
+seigzo = read_csv_auto('seigzo.csv')
+honhyo = read_csv_auto('honhyo_2024.csv')
 
 print(seigzo.head())
 print(honhyo.head())
