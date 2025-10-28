@@ -2,24 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>交通事故・規制分析</title>
+  <title>福井県 交通事故分析</title>
 </head>
 <body>
-  <h1>福井県 交通事故・交差点規制分析アプリ</h1>
+  <h1>福井県 交通事故分析</h1>
 
   <form method="POST" action="/results">
-    <label>都道府県コードを選択：</label>
+    <label>地域を選択：</label>
     <select name="area">
       <option value="">全地域</option>
       {% for area in areas %}
-        <option value="{{ area }}" {% if area == selected_area %}selected{% endif %}>{{ area }}</option>
+        <option value="{{ area }}">{{ area }}</option>
       {% endfor %}
     </select>
-
-    <label>交差点名で検索：</label>
-    <input type="text" name="intersection" value="{{ intersection }}" placeholder="部分一致検索">
-
-    <button type="submit">分析する</button>
+    <button type="submit">分析開始</button>
   </form>
+
 </body>
 </html>
